@@ -6,6 +6,11 @@ run_test() {
 
     . "$TESTCASE"
 
+    if [ -z "$DESCRIPTION" ]; then
+	echo "Please define a description for testcase $TESTCASE"
+	return
+    fi
+
     echo -n "$DESCRIPTION ..."
     if declare -fF do_test > /dev/null; then
 	if declare -fF setup > /dev/null && ! setup; then
@@ -24,6 +29,8 @@ run_test() {
 	if declare -fF teardown > /dev/null && ! teardown; then
 	    return 0
 	fi
+    else
+	echo "No do_test() defined?"
     fi
 }
 
