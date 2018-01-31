@@ -8,7 +8,7 @@ run_test() {
 
     if [ -z "$DESCRIPTION" ]; then
 	echo "Please define a description for testcase $TESTCASE"
-	return
+	return 0
     fi
 
     echo -n "$DESCRIPTION ..."
@@ -29,10 +29,15 @@ run_test() {
 	if declare -fF teardown > /dev/null && ! teardown; then
 	    return 0
 	fi
+
+	return $RESULT
     else
 	echo "No do_test() defined?"
+	return 0
     fi
 }
+
+FAILS=0
 
 if [ "$#" -eq 1 ]; then
     if [ -f $1 ]; then
@@ -41,5 +46,16 @@ if [ "$#" -eq 1 ]; then
 else
     for tc in tests/*; do
 	run_test $tc
+	if [ $? -eq 1 ]; then
+	    FAILS=$((FAILS+1))
+	fi
     done
+
+    echo -n "Overall result ..."
+    if [ $FAILS -eq 0 ]; then
+	echo "PASS"
+    else
+	echo "FAIL"
+	echo "$FAILS test-cases failed"
+    fi
 fi
