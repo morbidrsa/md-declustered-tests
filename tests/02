@@ -1,0 +1,28 @@
+#!/bin/sh
+# This file is part of md-declustered-tests and licensed under the GNU GPL v2
+
+DESCRIPTION="Assemble array with four zram disks"
+
+setup() {
+    modprobe md-declustered
+    modprobe zram num_devices="4"
+
+    for i in 0 1 2 3; do
+	echo 1g > /sys/block/zram$i/disksize
+    done
+
+}
+
+do_test() {
+    mdadm --create /dev/md0 --level=declustered --raid-disks=4 /dev/zram0 \
+	/dev/zram1 /dev/zram2 /dev/zram3 || return 1
+}
+
+teardown() {
+    mdadm --stop /dev/md0
+    for i in 0 1 2 3; do
+	mdadm --zero-superblock /dev/zram$i
+    done
+    modprobe -r md-declustered
+    modprobe -r zram
+}
