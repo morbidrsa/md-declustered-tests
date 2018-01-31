@@ -34,6 +34,12 @@ run_test() {
     fi
 }
 
-for tc in tests/*; do
-    run_test $tc
-done 
+if [ "$#" -eq 1 ]; then
+    if [ -f $1 ]; then
+	run_test $1
+    fi
+else
+    for tc in tests/*; do
+	run_test $tc
+    done
+fi
