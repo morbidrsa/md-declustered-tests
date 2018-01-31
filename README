@@ -1,0 +1,8 @@
+Test suite for my declustered RAID with MD development.
+
+After the development is done this shouldn't be needed anymore and
+merged into mdadm's testsuite.
+
+Current test:
+1. load/unload md-declustered kernel module
+2. Create an array with two zram backed disks

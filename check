@@ -1,0 +1,32 @@
+#!/bin/sh
+# This file is part of md-declustered-tests and licensed under the GNU GPL v2
+
+run_test() {
+    TESTCASE="$1"
+
+    . "$TESTCASE"
+
+    echo -n "$DESCRIPTION ..."
+    if declare -fF do_test > /dev/null; then
+	if declare -fF setup > /dev/null && ! setup; then
+	    echo "SKIP"
+	    return 0
+	fi
+
+	do_test
+	RESULT=$?
+	if [ $RESULT -eq 0 ]; then
+	    echo "PASS"
+	else
+	    echo "FAIL"
+	fi
+
+	if declare -fF teardown > /dev/null && ! teardown; then
+	    return 0
+	fi
+    fi
+}
+
+for tc in tests/*; do
+    run_test $tc
+done 

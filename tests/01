@@ -1,0 +1,19 @@
+#!/bin/sh
+# This file is part of md-declustered-tests and licensed under the GNU GPL v2
+
+DESCRIPTION="Test module load/unload"
+
+load_module() {
+    modprobe md-declustered
+    return $?
+}
+
+unload_module() {
+    modprobe -r md-declustered
+    return $?
+}
+
+do_test() {
+    load_module || return 1
+    unload_module || return 1
+}
