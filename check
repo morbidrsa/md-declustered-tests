@@ -2,12 +2,13 @@
 # This file is part of md-declustered-tests and licensed under the GNU GPL v2
 
 run_test() {
-    TESTCASE="$1"
+    local testcase="$1"
+    local result=
 
-    . "$TESTCASE"
+    . "$testcase"
 
     if [ -z "$DESCRIPTION" ]; then
-	echo "Please define a description for testcase $TESTCASE"
+	echo "Please define a description for testcase $testcase"
 	return 0
     fi
 
@@ -19,8 +20,8 @@ run_test() {
 	fi
 
 	do_test
-	RESULT=$?
-	if [ $RESULT -eq 0 ]; then
+	result=$?
+	if [ $result -eq 0 ]; then
 	    echo "PASS"
 	else
 	    echo "FAIL"
@@ -30,14 +31,14 @@ run_test() {
 	    return 0
 	fi
 
-	return $RESULT
+	return $result
     else
 	echo "No do_test() defined?"
 	return 0
     fi
 }
 
-FAILS=0
+fails=0
 
 if [ "$#" -eq 1 ]; then
     if [ -f $1 ]; then
@@ -47,15 +48,15 @@ else
     for tc in tests/*; do
 	run_test $tc
 	if [ $? -eq 1 ]; then
-	    FAILS=$((FAILS+1))
+	    fails=$((fails+1))
 	fi
     done
 
     echo -n "Overall result ..."
-    if [ $FAILS -eq 0 ]; then
+    if [ $fails -eq 0 ]; then
 	echo "PASS"
     else
 	echo "FAIL"
-	echo "$FAILS test-cases failed"
+	echo "$fails test-cases failed"
     fi
 fi
