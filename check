@@ -1,7 +1,8 @@
 #!/bin/sh
 # This file is part of md-declustered-tests and licensed under the GNU GPL v2
 
-run_test() {
+run_test()
+{
     local testcase="$1"
     local result=
 

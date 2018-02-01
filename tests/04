@@ -3,7 +3,8 @@
 
 DESCRIPTION="Assemble array with four zram disks"
 
-setup() {
+setup()
+{
     modprobe md-declustered
     modprobe zram num_devices="4"
 
@@ -15,12 +16,14 @@ setup() {
 	/dev/zram1 /dev/zram2 /dev/zram3 || return 1
 }
 
-do_test() {
+do_test()
+{
     cat /proc/mdstat | grep -q -e "Personalities: \[declustered\]" -a \
 	-e "\[4/4\]\[UUUU\]"
 }
 
-teardown() {
+teardown()
+{
     mdadm --stop /dev/md0
     for i in 0 1 2 3; do
 	mdadm --zero-superblock /dev/zram$i

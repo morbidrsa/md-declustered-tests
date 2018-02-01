@@ -3,17 +3,20 @@
 
 DESCRIPTION="Test module load/unload"
 
-load_module() {
+load_module()
+{
     modprobe md-declustered
     return $?
 }
 
-unload_module() {
+unload_module()
+{
     modprobe -r md-declustered
     return $?
 }
 
-do_test() {
+do_test()
+{
     load_module || return 1
     unload_module || return 1
 }

@@ -3,7 +3,8 @@
 
 DESCRIPTION="Assemble array with four zram disks"
 
-setup() {
+setup()
+{
     modprobe md-declustered
     modprobe zram num_devices="4"
 
@@ -13,12 +14,14 @@ setup() {
 
 }
 
-do_test() {
+do_test()
+{
     mdadm --create /dev/md0 --level=declustered --raid-disks=4 /dev/zram0 \
 	/dev/zram1 /dev/zram2 /dev/zram3 || return 1
 }
 
-teardown() {
+teardown()
+{
     mdadm --stop /dev/md0
     for i in 0 1 2 3; do
 	mdadm --zero-superblock /dev/zram$i
