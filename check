@@ -3,61 +3,61 @@
 
 run_test()
 {
-    local testcase="$1"
-    local result=
+	local testcase="$1"
+	local result=
 
-    . "$testcase"
+	. "$testcase"
 
-    if [ -z "$DESCRIPTION" ]; then
-	echo "Please define a description for testcase $testcase"
-	return 0
-    fi
-
-    echo -n "$DESCRIPTION ..."
-    if declare -fF do_test > /dev/null; then
-	if declare -fF setup > /dev/null && ! setup; then
-	    echo "SKIP"
-	    return 0
+	if [ -z "$DESCRIPTION" ]; then
+		echo "Please define a description for testcase $testcase"
+		return 0
 	fi
 
-	do_test
-	result=$?
-	if [ $result -eq 0 ]; then
-	    echo "PASS"
+	echo -n "$DESCRIPTION ..."
+	if declare -fF do_test > /dev/null; then
+		if declare -fF setup > /dev/null && ! setup; then
+			echo "SKIP"
+			return 0
+		fi
+
+		do_test
+		result=$?
+		if [ $result -eq 0 ]; then
+			echo "PASS"
+		else
+			echo "FAIL"
+		fi
+
+		if declare -fF teardown > /dev/null && ! teardown; then
+			return 0
+		fi
+
+		return $result
 	else
-	    echo "FAIL"
+		echo "No do_test() defined?"
+		return 0
 	fi
-
-	if declare -fF teardown > /dev/null && ! teardown; then
-	    return 0
-	fi
-
-	return $result
-    else
-	echo "No do_test() defined?"
-	return 0
-    fi
 }
 
 fails=0
 
 if [ "$#" -eq 1 ]; then
-    if [ -f $1 ]; then
-	run_test $1
-    fi
-else
-    for tc in tests/*; do
-	run_test $tc
-	if [ $? -eq 1 ]; then
-	    fails=$((fails+1))
+	if [ -f $1 ]; then
+		run_test $1
 	fi
-    done
+else
+	for tc in tests/*; do
+		run_test $tc
+		if [ $? -eq 1 ]; then
+			fails=$((fails+1))
+		fi
+	done
 
-    echo -n "Overall result ..."
-    if [ $fails -eq 0 ]; then
-	echo "PASS"
-    else
-	echo "FAIL"
-	echo "$fails test-cases failed"
-    fi
+	echo -n "Overall result ..."
+	if [ $fails -eq 0 ]; then
+		echo "PASS"
+	else
+		echo "FAIL"
+		echo "$fails test-cases failed"
+	fi
 fi
